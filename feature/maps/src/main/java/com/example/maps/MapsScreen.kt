@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.location.Geocoder
+import android.location.Location
 import android.os.Looper
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -41,6 +42,7 @@ import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberMarkerState
 import java.util.Locale
+
 
 @SuppressLint("MissingPermission") // we only call this after explicit permission check
 private fun fetchLastLocationImpl(
@@ -108,7 +110,7 @@ private fun bitmapDescriptorFromVector(
 }
 
 @Composable
-fun MapsScreen() {
+fun MapsScreen(onStepsUpdated: (Int) -> Unit = {}) {
     val context = LocalContext.current
 
     // Initial map camera (Ajmer)
@@ -139,6 +141,8 @@ fun MapsScreen() {
     }
     // Marker state for current position (remembered once)
     val markerState = rememberMarkerState()
+    var runSteps by remember { mutableStateOf(0) }
+    var totalDistanceMeters by remember { mutableStateOf(0f) }
 
     // Helper: do we currently have location permission?
     fun hasLocationPermission(): Boolean {
@@ -153,6 +157,10 @@ fun MapsScreen() {
         ) == PackageManager.PERMISSION_GRANTED
 
         return hasFine || hasCoarse
+    }
+    fun distanceToSteps(distanceMeters: Float): Int {
+        val stepLengthMeters = 0.75f
+        return (distanceMeters / stepLengthMeters).toInt()
     }
 
     // High‑accuracy updates every ~2 seconds, min 5m between points
@@ -173,10 +181,31 @@ fun MapsScreen() {
                 for (location in result.locations) {
                     val latLng = LatLng(location.latitude, location.longitude)
 
-                    // Add new point to the polyline list
-                    trackPoints.add(latLng)
+                    if (trackPoints.isNotEmpty()) {
+                        val lastPoint = trackPoints.last()
 
-                    // Optionally update text + camera while running
+                        val results = FloatArray(1)
+                        Location.distanceBetween(
+                            lastPoint.latitude,
+                            lastPoint.longitude,
+                            latLng.latitude,
+                            latLng.longitude,
+                            results
+                        )
+
+                        val segmentDistance = results[0]
+
+                        // Ignore tiny GPS jumps/noise
+                        if (segmentDistance >= 2f) {
+                            totalDistanceMeters += segmentDistance
+                            runSteps = distanceToSteps(totalDistanceMeters)
+                            onStepsUpdated(runSteps)
+                            trackPoints.add(latLng)
+                        }
+                    } else {
+                        trackPoints.add(latLng)
+                    }
+
                     latitude = String.format("%.5f", location.latitude)
                     longitude = String.format("%.5f", location.longitude)
 
@@ -224,6 +253,9 @@ fun MapsScreen() {
 
         // Reset previous run
         trackPoints.clear()
+        runSteps = 0
+        totalDistanceMeters = 0f
+        onStepsUpdated(0)
         status = "Tracking started..."
         isTracking = true
 
@@ -238,6 +270,7 @@ fun MapsScreen() {
         fusedLocationClient.removeLocationUpdates(locationCallback)
         isTracking = false
         status = "Tracking stopped"
+        onStepsUpdated(runSteps)
     }
 
     // Permission launcher

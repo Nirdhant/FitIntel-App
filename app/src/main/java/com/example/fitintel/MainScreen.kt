@@ -9,6 +9,7 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.runtime.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -39,6 +40,7 @@ data class BottomNavItem(
 fun MainScreen(onLogout: ()->Unit={}) {
     // This NavController is ONLY for the 4 bottom‑nav destinations
     val navController = rememberNavController()
+    var totalSteps by remember { mutableStateOf(0) }
 
     val items = listOf(
         BottomNavItem(Screen.Home,R.drawable.dashboard, "Home"),
@@ -91,7 +93,10 @@ fun MainScreen(onLogout: ()->Unit={}) {
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(Screen.Home.route) {
-                HomeScreen(onLogoutClick = onLogout)
+                HomeScreen(
+                    stepsCount = totalSteps,
+                    onLogoutClick = onLogout
+                )
             }
             composable(Screen.Pdf.route) {
                 PdfScreen()
@@ -100,7 +105,11 @@ fun MainScreen(onLogout: ()->Unit={}) {
                 GeminiScreen()
             }
             composable(Screen.Maps.route) {
-                MapsScreen()
+                MapsScreen(
+                    onStepsUpdated = { updatedSteps ->
+                        totalSteps = updatedSteps
+                    }
+                )
             }
         }
     }

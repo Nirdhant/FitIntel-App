@@ -2,8 +2,8 @@ package com.example.home
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -18,6 +18,7 @@ import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun HomeScreen(
+    stepsCount: Int = 0,
     onLogoutClick: () -> Unit = {}
 ) {
     val user = FirebaseAuth.getInstance().currentUser
@@ -146,7 +147,7 @@ fun HomeScreen(
                         innerColor = Color(0xFF2E7D32),        // deep green
                         outerColor = Color(0xFFC8E6C9),        // light green
                         steps = true,
-                        stepsCount = 30
+                        stepsCount = stepsCount
                     )
 
                     Column(
