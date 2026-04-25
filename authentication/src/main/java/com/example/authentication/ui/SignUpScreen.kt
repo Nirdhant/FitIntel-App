@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.*
@@ -68,20 +69,25 @@ fun SignUpScreen(
             {
                 Image(modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(fraction = 0.45f),
+                    .fillMaxHeight(fraction = 0.55f),
                     painter = painterResource(id = R.drawable.shape),
                     contentDescription = null,
                     contentScale = ContentScale.FillBounds
                 )
 
-                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 20.dp))
+                Row(verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.align(alignment = Alignment.Center)
+                        .padding(bottom = 100.dp, start = 30.dp))
                 {
-                    Icon(modifier = Modifier.size(200.dp), painter = painterResource(id = R.drawable.fitintel), contentDescription = null,
-                        tint = uiColor
+                    Image(
+                        painter = painterResource(id = R.drawable.fitintel),
+                        contentDescription = null,
+                        modifier = Modifier.size(150.dp).align(Alignment.CenterVertically)
                     )
                 }
                 Text(
-                    text = "Sign Up",
+                    text = "SignUp",
                     modifier = Modifier
                         .padding(bottom = 16.dp)
                         .align(alignment = Alignment.BottomCenter), style = MaterialTheme.typography.headlineLarge,
@@ -89,7 +95,7 @@ fun SignUpScreen(
                 )
             }
             //--------------------------------------------------------------------------------------
-            Spacer(modifier = Modifier.height(35.dp))
+            Spacer(modifier = Modifier.height(25.dp))
             Column(modifier = Modifier
                 .padding(horizontal = 25.dp)
                 .fillMaxSize())
@@ -150,29 +156,29 @@ fun SignUpScreen(
                         )
                     }
                 }
+                Spacer(modifier = Modifier.height(30.dp))
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Box(modifier= Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(fraction = 0.8f),
-                        contentAlignment=Alignment.BottomCenter
+                        .fillMaxWidth(),
+                        contentAlignment=Alignment.Center
                     )
                     {
                         ClickableText(text = buildAnnotatedString {
                             withStyle(style=SpanStyle(
                                 color=Color(0xFF94A3B8),
                                 fontFamily = Roboto,
-                                fontSize=14.sp,
+                                fontSize=15.sp,
                                 fontWeight = FontWeight.Normal
                             )){ append("Already Have Account?")}
 
                             withStyle(style=SpanStyle(
                                 color=uiColor,
                                 fontFamily = Roboto,
-                                fontSize=14.sp,
+                                fontSize=15.sp,
                                 fontWeight = FontWeight.Medium
                             )){
                                 append(" ")
-                                append("Sign In")
+                                append("SignIn")
                             }
                         },
                             onClick = {

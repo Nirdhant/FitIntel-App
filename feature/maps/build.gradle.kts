@@ -46,6 +46,8 @@ dependencies {
     implementation(libs.androidx.material3)
 
     implementation(libs.maps.compose)
+    implementation(libs.play.services.location)
+    implementation(libs.androidx.activity.compose)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

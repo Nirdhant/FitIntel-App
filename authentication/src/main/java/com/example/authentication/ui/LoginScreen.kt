@@ -3,6 +3,7 @@ package com.example.authentication.ui
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -86,20 +87,24 @@ fun LoginScreen(
                 Image(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .fillMaxHeight(fraction = 0.45f) ,
+                        .fillMaxHeight(fraction = 0.55f) ,
                     painter=painterResource(id = R.drawable.shape),
-                    contentDescription = null, contentScale = ContentScale.FillBounds
+                    contentDescription = null,
+                    contentScale = ContentScale.FillBounds
                 )
-                Row(verticalAlignment = Alignment.CenterVertically ,modifier = Modifier.padding(top = 20.dp))
+                Row(verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                    ,modifier = Modifier.align(alignment = Alignment.Center)
+                        .padding(bottom = 100.dp, start = 30.dp))
                 {
-                    Icon(
-                        modifier = Modifier.size(200.dp),
+                    Image(
                         painter = painterResource(id = R.drawable.fitintel),
                         contentDescription = null,
-                        tint= uiColor
+                        modifier = Modifier.size(150.dp).align(Alignment.CenterVertically)
                     )
+
                 }
-                Text(text ="Log In" ,modifier= Modifier
+                Text(text ="LogIn" ,modifier= Modifier
                     .padding(bottom = 16.dp)
                     .align(alignment = Alignment.BottomCenter),style = MaterialTheme.typography.headlineLarge ,color=uiColor)
             }
@@ -122,7 +127,7 @@ fun LoginScreen(
                     passwordState,
                     modifier = Modifier.fillMaxWidth(),
                     label = "Password",
-                    trailing = "Forgot?"
+                    trailing = ""
                 )
                 Spacer(modifier = Modifier.height(20.dp))
                 Button(modifier= Modifier
@@ -162,25 +167,24 @@ fun LoginScreen(
                 Spacer(modifier = Modifier.height(30.dp))
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Box(modifier= Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(fraction = 0.8f),
-                        contentAlignment=Alignment.BottomCenter){
+                        .fillMaxWidth(),
+                        contentAlignment=Alignment.Center){
                         ClickableText(text = buildAnnotatedString {
                             withStyle(style=SpanStyle(
                                 color=Color(0xFF94A3B8),
                                 fontFamily = Roboto,
-                                fontSize=14.sp,
+                                fontSize=15.sp,
                                 fontWeight = FontWeight.Normal
                             )){ append("Don't Have Account?")}
 
                             withStyle(style=SpanStyle(
                                     color=uiColor,
                                     fontFamily = Roboto,
-                                    fontSize=14.sp,
+                                    fontSize=15.sp,
                                     fontWeight = FontWeight.Medium
                                 )){
                                 append(" ")
-                                append("Sign Up")
+                                append("SignUp")
                             }
                         },
                             onClick = {
