@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import com.example.data.state.AppState
 
 class PdfViewModel : ViewModel() {
 
@@ -43,9 +44,12 @@ class PdfViewModel : ViewModel() {
                     )
                     return@launch
                 }
-
                 val healthData = healthDataResult.getOrNull()
                 if (healthData != null && isValidHealthData(healthData)) {
+                    // 1) Save globally for dashboard
+                    AppState.setHealthData(healthData)
+
+                    // 2) Notify UI that parsing succeeded
                     _pdfState.value = PdfState.Success(healthData)
                 } else {
                     _pdfState.value = PdfState.Error(

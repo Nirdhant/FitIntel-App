@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.data.state.AppState
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
@@ -23,6 +24,33 @@ fun HomeScreen(
 ) {
     val user = FirebaseAuth.getInstance().currentUser
     val email = user?.email ?: "Unknown user"
+    val healthData = AppState.healthData
+
+    // Default scores (0–100) if data is missing
+    val caloriesScore = (healthData?.caloriesBurned ?: 10).coerceIn(0, 100)
+    val sugarScore = (healthData?.sugarLevel?.toInt() ?: 10).coerceIn(0, 100)
+    val hbScore = when (val hb = healthData?.hemoglobinLevel) {
+        null -> 16
+        in 12f..15f -> 85
+        in 10f..11.9f -> 65
+        in 8f..9.9f -> 40
+        else -> 25
+    }
+    val cholScore = when (val c = healthData?.cholesterolLevel) {
+        null -> 16
+        in 0f..150f -> 50
+        in 150f..200f -> 70
+        in 200f..240f -> 85
+        else -> 95
+    }
+    val heartRateScore = (healthData?.heartRate ?: 10).coerceIn(0, 100)
+
+    // Convert to 0f..1f as ProgressIndicator expects
+    val caloriesPercent = caloriesScore / 100f
+    val sugarPercent = sugarScore / 100f
+    val hbPercent = hbScore / 100f
+    val cholesterolPercent = cholScore / 100f
+    val heartRatePercent = heartRateScore / 100f
 
     Column(
         modifier = Modifier
@@ -68,21 +96,21 @@ fun HomeScreen(
                         // Bright orange theme
                         innerColor = Color(0xFFFF6F00),        // deep orange
                         outerColor = Color(0xFFFFE082),        // light amber
-                        percentage = 0.2f
+                        percentage = caloriesPercent
                     )
                     ProgressIndicator(
                         label = "Sugar",
                         // Red / pink theme
                         innerColor = Color(0xFFD32F2F),        // strong red
                         outerColor = Color(0xFFFFCDD2),        // light pink
-                        percentage = 0.8f
+                        percentage = sugarPercent
                     )
                     ProgressIndicator(
                         label = "Haemoglobin",
                         // Purple theme
                         innerColor = Color(0xFF7B1FA2),        // deep purple
                         outerColor = Color(0xFFE1BEE7),        // light lavender
-                        percentage = 0.4f
+                        percentage = hbPercent
                     )
                 }
 
@@ -99,14 +127,14 @@ fun HomeScreen(
                         // Blue theme
                         innerColor = Color(0xFF1976D2),        // deep blue
                         outerColor = Color(0xFFBBDEFB),        // light blue
-                        percentage = 0.6f
+                        percentage = cholesterolPercent
                     )
                     ProgressIndicator(
                         label = "Heart Rate",
                         // Orange/red theme
                         innerColor = Color(0xFFE64A19),        // burnt orange
                         outerColor = Color(0xFFFFCCBC),        // light orange
-                        percentage = 0.9f
+                        percentage = heartRatePercent
                     )
                 }
             }
